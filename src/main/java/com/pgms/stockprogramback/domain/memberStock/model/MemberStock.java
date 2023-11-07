@@ -6,16 +6,23 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 
 import java.util.List;
 
+
 @Entity
+@Getter
 public class MemberStock {
     @Id
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
     @ManyToOne(fetch = FetchType.LAZY)
-    private Stock stock;
+    private Stock stock ;
     private int quantity;
+
+    public void sellStock(Integer quantity) {
+        this.quantity -= quantity;
+    }
 }

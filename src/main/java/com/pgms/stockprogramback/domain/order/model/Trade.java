@@ -5,11 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@Getter
 @Entity
 public class Trade {
     @Id
@@ -23,6 +27,8 @@ public class Trade {
     private LocalDateTime updatedAt;
     @ManyToOne(fetch = FetchType.LAZY)
     private Stock stocks;
+
+    public Trade() {}
 
     public Integer getTotalPrice(){
         return price*quantity;

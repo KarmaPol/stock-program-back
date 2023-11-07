@@ -1,6 +1,7 @@
 package com.pgms.stockprogramback.domain.order.controller;
 
 import com.pgms.stockprogramback.domain.order.dto.TradeBuyRequestDto;
+import com.pgms.stockprogramback.domain.order.dto.TradeSellRequestDto;
 import com.pgms.stockprogramback.domain.order.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class TradeController {
     }
 
     @PostMapping("/order/short")
-    public void sellOrder(TradeBuyRequestDto tradeBuyRequestDto){
-        tradeService.sellOrder(tradeBuyRequestDto);
+    public void sellOrder(TradeSellRequestDto tradeSellRequestDto){
+        tradeService.sellOrder(tradeSellRequestDto);
     }
 }
