@@ -17,4 +17,12 @@ public class Stock {
     private Integer currentPrice;
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public void changeInfo(Integer price) {
+        if(highPrice < price)
+            highPrice = price;
+        if(lowPrice > price)
+            lowPrice = price;
+        currentPrice = price;
+    }
 }

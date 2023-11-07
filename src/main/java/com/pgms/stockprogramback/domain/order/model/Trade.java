@@ -5,20 +5,18 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-public class Order {
+public class Trade {
     @Id
     private Long id;
     private Integer price;
     private Integer quantity;
+    private Boolean isTraded = false;
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
