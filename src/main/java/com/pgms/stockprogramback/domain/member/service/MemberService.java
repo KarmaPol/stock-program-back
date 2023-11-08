@@ -4,11 +4,9 @@ import com.pgms.stockprogramback.domain.member.model.Member;
 import com.pgms.stockprogramback.domain.member.repository.MemberRepository;
 import com.pgms.stockprogramback.domain.memberStock.dto.MemberStockResponseDto;
 import com.pgms.stockprogramback.domain.memberStock.mapper.MemberStockMapper;
-import com.pgms.stockprogramback.domain.memberStock.mapper.MemberStockMapperImpl;
 import com.pgms.stockprogramback.domain.stock.mapper.StockMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,7 +22,7 @@ public class MemberService {
         return memberRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 멤버입니다."));
     }
 
-    public List<MemberStockResponseDto> getMemberStockByMember(Long memberId){
+    public List<MemberStockResponseDto> getMemberStocksByMember(Long memberId){
         Member member = getMember(memberId);
         return member.getMemberStocks().stream()
                 .map(s -> memberStockMapper.memberStockToMemberStockResponseDto(s, stockMapper.stockToStockResponseDto(s.getStock()))).toList();
