@@ -1,6 +1,8 @@
 package com.pgms.stockprogramback.domain.stock.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -11,6 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 public class Stock {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private Integer quantity;

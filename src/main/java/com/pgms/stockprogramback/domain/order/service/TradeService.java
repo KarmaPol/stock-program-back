@@ -7,7 +7,6 @@ import com.pgms.stockprogramback.domain.order.dto.TradeBuyRequestDto;
 import com.pgms.stockprogramback.domain.order.dto.TradeSellRequestDto;
 import com.pgms.stockprogramback.domain.order.model.Trade;
 import com.pgms.stockprogramback.domain.order.repository.TradeRepository;
-import com.pgms.stockprogramback.domain.stock.model.Stock;
 import com.pgms.stockprogramback.domain.stock.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,23 +21,45 @@ public class TradeService {
     private final MemberService memberService;
     private final TradeRepository tradeRepository;
 
-    // todo 수량 체크, 거래 상태 체크, 가격 체크
-    public void buyOrder(TradeBuyRequestDto tradeBuyRequestDto) {
-        Stock stock = stockService.getStock(tradeBuyRequestDto.stockId());
-
-        stock.changeInfo(tradeBuyRequestDto.getPrice());
+    public Trade getTrade(Long id){
+        return tradeRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 거래입니다."));
     }
 
-    // 판매자의 수량 체크
-    public void sellOrder(TradeSellRequestDto tradeBuyRequestDto) {
+    public void buyOrder(TradeBuyRequestDto tradeBuyRequestDto) {
+        Trade trade = getTrade(tradeBuyRequestDto.TradeId());
+
+        isValidTrade(tradeBuyRequestDto, trade);
+
+        // member가 이미 보유 중인 stock은 quantity만 추가
         Member member = memberService.getMember(tradeBuyRequestDto.memberId());
+        member.getMemberStocks().stream()
+                .filter(s -> s.getStock().getId().equals(trade.getStock().getId())).findAny()
+                .ifPresentOrElse((s) -> s.addStock(tradeBuyRequestDto.quantity()),
+                        () -> member.getMemberStocks().add(new MemberStock(member, trade.getStock(), trade.getQuantity())));
+
+        trade.sellStock(tradeBuyRequestDto.quantity());
+        // 거래 성사 시 stock 시가 조정
+        trade.getStock().changeInfo(trade.getPrice());
+    }
+
+    private void isValidTrade(TradeBuyRequestDto tradeBuyRequestDto, Trade trade) {
+        if(trade.getIsTraded())
+            throw new RuntimeException("완료된 거래입니다.");
+        if(trade.getPrice() > tradeBuyRequestDto.price())
+            throw new RuntimeException("invalid input");
+        if(trade.getQuantity() > tradeBuyRequestDto.quantity())
+            throw new RuntimeException("invalid input");
+    }
+
+    public void sellOrder(TradeSellRequestDto tradeSellRequestDto) {
+        Member member = memberService.getMember(tradeSellRequestDto.memberId());
         MemberStock memberStock = member.getMemberStocks().stream()
-                .filter(s -> s.getStock().getId().equals(tradeBuyRequestDto.stockId()) && s.getQuantity() >= tradeBuyRequestDto.quantity()).findAny()
+                .filter(s -> s.getStock().getId().equals(tradeSellRequestDto.stockId()) && s.getQuantity() >= tradeSellRequestDto.quantity()).findAny()
                 .orElseThrow(() -> new RuntimeException("보유 수량이 부족합니다."));
 
-        memberStock.sellStock(tradeBuyRequestDto.quantity());
+        memberStock.sellStock(tradeSellRequestDto.quantity());
 
-        Trade trade = Trade.builder().stocks(memberStock.getStock()).quantity(tradeBuyRequestDto.quantity()).build();
+        Trade trade = Trade.builder().stock(memberStock.getStock()).quantity(tradeSellRequestDto.quantity()).build();
         tradeRepository.save(trade);
     }
 }
