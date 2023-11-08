@@ -3,6 +3,7 @@ package com.pgms.stockprogramback.domain.trade.service;
 import com.pgms.stockprogramback.domain.member.model.Member;
 import com.pgms.stockprogramback.domain.member.service.MemberService;
 import com.pgms.stockprogramback.domain.memberStock.model.MemberStock;
+import com.pgms.stockprogramback.domain.stock.mapper.StockMapper;
 import com.pgms.stockprogramback.domain.trade.dto.TradeBuyRequestDto;
 import com.pgms.stockprogramback.domain.trade.dto.TradeResponseDto;
 import com.pgms.stockprogramback.domain.trade.dto.TradeSellRequestDto;
@@ -25,6 +26,7 @@ public class TradeService {
     private final MemberService memberService;
     private final TradeRepository tradeRepository;
     private final TradeMapper tradeMapper;
+    private final StockMapper stockMapper;
 
     public Trade getTrade(Long id){
         return tradeRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 거래입니다."));
@@ -69,6 +71,6 @@ public class TradeService {
     }
 
     public List<TradeResponseDto> getTrades(){
-        return tradeRepository.findAll().stream().map(t -> tradeMapper.tradeToTradeResponseDto(t, t.getStock().getStockId())).toList();
+        return tradeRepository.findAll().stream().map(t -> tradeMapper.tradeToTradeResponseDto(t, stockMapper.stockToStockResponseDto(t.getStock()))).toList();
     }
 }
