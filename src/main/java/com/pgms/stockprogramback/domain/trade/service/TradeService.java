@@ -13,6 +13,7 @@ import com.pgms.stockprogramback.domain.trade.model.Trade;
 import com.pgms.stockprogramback.domain.trade.repository.TradeRepository;
 import com.pgms.stockprogramback.domain.stock.service.StockService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +30,8 @@ public class TradeService {
     private final TradeMapper tradeMapper;
     private final StockMapper stockMapper;
     private final MemberStockRepository memberStockRepository;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     public Trade getTrade(Long id){
         return tradeRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 거래입니다."));
@@ -77,6 +80,8 @@ public class TradeService {
 
         Trade trade = Trade.builder().stock(memberStock.getStock()).quantity(tradeSellRequestDto.quantity()).build();
         tradeRepository.save(trade);
+
+        eventPublisher.publishEvent(trade);
     }
 
     public List<TradeResponseDto> getTrades(){
