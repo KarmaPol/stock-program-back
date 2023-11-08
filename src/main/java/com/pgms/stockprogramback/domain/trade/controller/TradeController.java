@@ -5,9 +5,7 @@ import com.pgms.stockprogramback.domain.trade.dto.TradeResponseDto;
 import com.pgms.stockprogramback.domain.trade.dto.TradeSellRequestDto;
 import com.pgms.stockprogramback.domain.trade.service.TradeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 

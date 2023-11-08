@@ -9,12 +9,17 @@ spring:
 #    url: jdbc:mysql://localhost:3307/prod?useSSL=false&allowPublicKeyRetrieval=true
 #    username: root
 #    password: mypassword
-jpa:
-  database-platform: org.hibernate.dialect.H2Dialect
-  hibernate:
-    ddl-auto: create
-  properties:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      dialect: org.hibernate.dialect.H2Dialect
-      show_sql: true
-      format_sql: true
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        show_sql: true
+        format_sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always

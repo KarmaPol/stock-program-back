@@ -13,6 +13,6 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
     private List<MemberStock> memberStocks = new ArrayList<>();
 }
