@@ -1,8 +1,8 @@
-package com.pgms.stockprogramback.domain.order.controller;
+package com.pgms.stockprogramback.domain.trade.controller;
 
-import com.pgms.stockprogramback.domain.order.dto.TradeBuyRequestDto;
-import com.pgms.stockprogramback.domain.order.dto.TradeSellRequestDto;
-import com.pgms.stockprogramback.domain.order.service.TradeService;
+import com.pgms.stockprogramback.domain.trade.dto.TradeBuyRequestDto;
+import com.pgms.stockprogramback.domain.trade.dto.TradeSellRequestDto;
+import com.pgms.stockprogramback.domain.trade.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;

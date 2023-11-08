@@ -1,16 +1,20 @@
-package com.pgms.stockprogramback.domain.order.service;
+package com.pgms.stockprogramback.domain.trade.service;
 
 import com.pgms.stockprogramback.domain.member.model.Member;
 import com.pgms.stockprogramback.domain.member.service.MemberService;
 import com.pgms.stockprogramback.domain.memberStock.model.MemberStock;
-import com.pgms.stockprogramback.domain.order.dto.TradeBuyRequestDto;
-import com.pgms.stockprogramback.domain.order.dto.TradeSellRequestDto;
-import com.pgms.stockprogramback.domain.order.model.Trade;
-import com.pgms.stockprogramback.domain.order.repository.TradeRepository;
+import com.pgms.stockprogramback.domain.trade.dto.TradeBuyRequestDto;
+import com.pgms.stockprogramback.domain.trade.dto.TradeResponseDto;
+import com.pgms.stockprogramback.domain.trade.dto.TradeSellRequestDto;
+import com.pgms.stockprogramback.domain.trade.mapper.TradeMapper;
+import com.pgms.stockprogramback.domain.trade.model.Trade;
+import com.pgms.stockprogramback.domain.trade.repository.TradeRepository;
 import com.pgms.stockprogramback.domain.stock.service.StockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -20,6 +24,7 @@ public class TradeService {
     private final StockService stockService;
     private final MemberService memberService;
     private final TradeRepository tradeRepository;
+    private final TradeMapper tradeMapper;
 
     public Trade getTrade(Long id){
         return tradeRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 거래입니다."));
@@ -33,7 +38,7 @@ public class TradeService {
         // member가 이미 보유 중인 stock은 quantity만 추가
         Member member = memberService.getMember(tradeBuyRequestDto.memberId());
         member.getMemberStocks().stream()
-                .filter(s -> s.getStock().getId().equals(trade.getStock().getId())).findAny()
+                .filter(s -> s.getStock().getStockId().equals(trade.getStock().getStockId())).findAny()
                 .ifPresentOrElse((s) -> s.addStock(tradeBuyRequestDto.quantity()),
                         () -> member.getMemberStocks().add(new MemberStock(member, trade.getStock(), trade.getQuantity())));
 
@@ -54,12 +59,16 @@ public class TradeService {
     public void sellOrder(TradeSellRequestDto tradeSellRequestDto) {
         Member member = memberService.getMember(tradeSellRequestDto.memberId());
         MemberStock memberStock = member.getMemberStocks().stream()
-                .filter(s -> s.getStock().getId().equals(tradeSellRequestDto.stockId()) && s.getQuantity() >= tradeSellRequestDto.quantity()).findAny()
+                .filter(s -> s.getStock().getStockId().equals(tradeSellRequestDto.stockId()) && s.getQuantity() >= tradeSellRequestDto.quantity()).findAny()
                 .orElseThrow(() -> new RuntimeException("보유 수량이 부족합니다."));
 
         memberStock.sellStock(tradeSellRequestDto.quantity());
 
         Trade trade = Trade.builder().stock(memberStock.getStock()).quantity(tradeSellRequestDto.quantity()).build();
         tradeRepository.save(trade);
+    }
+
+    public List<TradeResponseDto> getTrades(){
+        return tradeRepository.findAll().stream().map(t -> tradeMapper.tradeToTradeResponseDto(t, t.getStock().getStockId())).toList();
     }
 }

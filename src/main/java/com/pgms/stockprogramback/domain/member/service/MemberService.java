@@ -15,4 +15,9 @@ public class MemberService {
     public Member getMember(Long id){
         return memberRepository.findById(id).orElseThrow(() -> new RuntimeException("존재하지 않는 멤버입니다."));
     }
+
+    public void getMemberStockByMember(Long memberId){
+        Member member = getMember(memberId);
+//        member.getMemberStocks().stream().map(s -> )
+    }
 }

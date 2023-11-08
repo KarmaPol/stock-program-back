@@ -1,4 +1,4 @@
-package com.pgms.stockprogramback.domain.order.model;
+package com.pgms.stockprogramback.domain.trade.model;
 
 import com.pgms.stockprogramback.domain.stock.model.Stock;
 import jakarta.persistence.*;

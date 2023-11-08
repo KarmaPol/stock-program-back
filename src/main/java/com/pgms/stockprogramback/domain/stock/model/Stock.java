@@ -14,9 +14,8 @@ import java.time.LocalDateTime;
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long stockId;
     private String name;
-    private Integer quantity;
     private Integer highPrice;
     private Integer lowPrice;
     private Integer currentPrice;
