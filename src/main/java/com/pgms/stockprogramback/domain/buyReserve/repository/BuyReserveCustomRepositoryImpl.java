@@ -1,7 +1,6 @@
 package com.pgms.stockprogramback.domain.buyReserve.repository;
 
 import com.pgms.stockprogramback.domain.buyReserve.model.BuyReserve;
-import com.pgms.stockprogramback.domain.buyReserve.model.QBuyReserve;
 import com.pgms.stockprogramback.domain.stock.model.Stock;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

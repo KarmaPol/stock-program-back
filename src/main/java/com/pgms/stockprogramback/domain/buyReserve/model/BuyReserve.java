@@ -17,4 +17,11 @@ public class BuyReserve {
     private Stock stock;
     private Integer quantity;
     private Integer price;
+
+    public BuyReserve(Member buyer, Stock stock, Integer quantity, Integer price) {
+        this.buyer = buyer;
+        this.stock = stock;
+        this.quantity = quantity;
+        this.price = price;
+    }
 }

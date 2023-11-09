@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface BuyReserveCustomRepository {
 
     Optional<BuyReserve> findBuyReserveByStockAndPrice(Stock stock, Integer price, Integer quantity);
+
 }
