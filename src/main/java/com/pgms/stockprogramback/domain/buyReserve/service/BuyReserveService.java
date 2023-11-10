@@ -11,13 +11,14 @@ import com.pgms.stockprogramback.domain.stock.mapper.StockMapper;
 import com.pgms.stockprogramback.domain.stock.model.Stock;
 import com.pgms.stockprogramback.domain.stock.service.StockService;
 import com.pgms.stockprogramback.domain.trade.dto.TradeBuyRequestDto;
+import com.pgms.stockprogramback.domain.trade.model.SellTradeEvent;
 import com.pgms.stockprogramback.domain.trade.model.Trade;
 import com.pgms.stockprogramback.domain.trade.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.List;
 
@@ -34,15 +35,17 @@ public class BuyReserveService {
     private final StockService stockService;
     private final StockMapper stockMapper;
 
-    @TransactionalEventListener
-    public void sellEventListener(Trade trade){
+    @EventListener
+    public void sellEventListener(SellTradeEvent event){
         log.info(">>>>>> Buy Reservation Event");
+
+        Trade trade = event.getTrade();
 
         // trade 보다 주문 수량이 적고, 주문 가격이 높은 buyReserve 를 가져온다
         buyReserveCustomRepository.findBuyReserveByStockAndPrice(trade.getStock(), trade.getPrice(), trade.getQuantity())
                 .ifPresent(buyReserve ->
                 {
-                    TradeBuyRequestDto tradeBuyRequestDto = new TradeBuyRequestDto(buyReserve.getPrice(), buyReserve.getQuantity(), buyReserve.getBuyer().getId(), trade.getId());
+                    TradeBuyRequestDto tradeBuyRequestDto = new TradeBuyRequestDto(buyReserve.getPrice(), buyReserve.getQuantity(), buyReserve.getMember().getId(), trade.getId());
                     tradeService.buyOrder(tradeBuyRequestDto);
                     buyReserveRepository.delete(buyReserve);
                 });
@@ -50,7 +53,7 @@ public class BuyReserveService {
 
     public List<BuyReserveResponseDto> getBuyReserveListByMember(Long id){
         Member member = memberService.getMember(id);
-        return buyReserveRepository.findBuyReservesByBuyer(member).stream().map(r ->
+        return buyReserveRepository.findBuyReservesByMember(member).stream().map(r ->
             new BuyReserveResponseDto(r.getId(), stockMapper.stockToStockResponseDto(r.getStock()), r.getQuantity(), r.getPrice())
         ).toList();
     }

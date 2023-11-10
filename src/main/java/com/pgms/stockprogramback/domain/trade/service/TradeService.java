@@ -9,6 +9,7 @@ import com.pgms.stockprogramback.domain.trade.dto.TradeBuyRequestDto;
 import com.pgms.stockprogramback.domain.trade.dto.TradeResponseDto;
 import com.pgms.stockprogramback.domain.trade.dto.TradeSellRequestDto;
 import com.pgms.stockprogramback.domain.trade.mapper.TradeMapper;
+import com.pgms.stockprogramback.domain.trade.model.SellTradeEvent;
 import com.pgms.stockprogramback.domain.trade.model.Trade;
 import com.pgms.stockprogramback.domain.trade.repository.TradeRepository;
 import com.pgms.stockprogramback.domain.stock.service.StockService;
@@ -44,7 +45,7 @@ public class TradeService {
 
         // member가 이미 보유 중인 stock은 quantity만 추가
         Member member = memberService.getMember(tradeBuyRequestDto.memberId());
-        MemberStock memberStock = new MemberStock(member, trade.getStock(), trade.getQuantity());
+        MemberStock memberStock = new MemberStock(member, trade.getStock(), tradeBuyRequestDto.quantity());
         member.getMemberStocks().stream()
                 .filter(s -> s.getStock().getStockId().equals(trade.getStock().getStockId()))
                 .findAny()
@@ -81,7 +82,7 @@ public class TradeService {
         Trade trade = Trade.builder().stock(memberStock.getStock()).quantity(tradeSellRequestDto.quantity()).build();
         tradeRepository.save(trade);
 
-        eventPublisher.publishEvent(trade);
+        eventPublisher.publishEvent(new SellTradeEvent(trade));
     }
 
     public List<TradeResponseDto> getTrades(){

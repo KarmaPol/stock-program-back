@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface BuyReserveRepository extends JpaRepository<BuyReserve, Long> {
 
-    List<BuyReserve> findBuyReservesByBuyer(Member buyer);
+    List<BuyReserve> findBuyReservesByMember(Member member);
 }
